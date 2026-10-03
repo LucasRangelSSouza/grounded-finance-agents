@@ -1,0 +1,493 @@
+{
+ "summary": {
+  "table_in_prompt": 23,
+  "query_only": 22,
+  "query_only_fallbacks": 0,
+  "query_only_retries": 2,
+  "model": "qwen-abliterated",
+  "table_empty_first_try": 8,
+  "table_empty_after_retry": 1
+ },
+ "results": [
+  {
+   "id": "q01",
+   "kind": "number",
+   "expected": 36059.96000000001,
+   "table_in_prompt": {
+    "answer": "Total gross revenue in 2025 was 36,059.96 thousand.",
+    "correct": true,
+    "seconds": 115.1,
+    "seconds_retry": 129.9,
+    "retried_with_tokens": 16000,
+    "empty_after_retry": false
+   },
+   "query_only": {
+    "answer": "Total gross revenue in 2025 was 36,059.96 thousand.",
+    "sql": "SELECT SUM(f.value)\nFROM fact_dre f\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE a.line = 'gross_revenue'\n  AND f.month LIKE '2025-%';",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 19.6,
+    "correct": true
+   }
+  },
+  {
+   "id": "q02",
+   "kind": "number",
+   "expected": 29497.2,
+   "table_in_prompt": {
+    "answer": "Net revenue in 2025 was 29,497.20 thousand.",
+    "correct": true,
+    "seconds": 116.0,
+    "seconds_retry": 395.1,
+    "retried_with_tokens": 16000,
+    "empty_after_retry": false
+   },
+   "query_only": {
+    "answer": "Net revenue in 2025 was 29,497.20 thousand.",
+    "sql": "SELECT SUM(f.value)\nFROM fact_dre AS f\nJOIN dim_account AS a ON f.account_id = a.account_id\nWHERE a.line IN ('gross_revenue', 'deductions')\n  AND f.month LIKE '2025-%';",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 54.4,
+    "correct": true
+   }
+  },
+  {
+   "id": "q03",
+   "kind": "number",
+   "expected": 914.74,
+   "table_in_prompt": {
+    "answer": "The net revenue of the North unit in March 2025 was 914.74 thousand.",
+    "correct": true,
+    "seconds": 12.2
+   },
+   "query_only": {
+    "answer": "The North unit's net revenue in March 2025 was 914.74 thousand.",
+    "sql": "SELECT SUM(f.value)\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE u.unit = 'North'\n  AND f.month = '2025-03'\n  AND a.line IN ('gross_revenue', 'deductions');",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 19.9,
+    "correct": true
+   }
+  },
+  {
+   "id": "q04",
+   "kind": "number",
+   "expected": 511.91999999999996,
+   "table_in_prompt": {
+    "answer": "The Export unit spent 511.92 thousand on freight in 2025.",
+    "correct": true,
+    "seconds": 20.6
+   },
+   "query_only": {
+    "answer": "The Export unit spent 511.92 thousand on freight in 2025.",
+    "sql": "SELECT -SUM(f.value)\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE u.unit = 'Export'\n  AND a.account = 'Freight'\n  AND f.month LIKE '2025%'",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 20.2,
+    "correct": true
+   }
+  },
+  {
+   "id": "q05",
+   "kind": "number",
+   "expected": 1443.51,
+   "table_in_prompt": {
+    "answer": "Total salaries cost across all units in Q2 2025 was 1,443.51 thousand.",
+    "correct": true,
+    "seconds": 28.5
+   },
+   "query_only": {
+    "answer": "Total salaries cost across all units in the second quarter of 2025 was 1,443.51 thousand.",
+    "sql": "SELECT ABS(SUM(f.value))\nFROM fact_dre f\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE a.account = 'Salaries'\n  AND f.month IN ('2025-04','2025-05','2025-06')",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 13.4,
+    "correct": true
+   }
+  },
+  {
+   "id": "q06",
+   "kind": "name",
+   "expected": "North",
+   "table_in_prompt": {
+    "answer": "North had the highest net revenue in 2025.",
+    "correct": true,
+    "seconds": 129.1,
+    "seconds_retry": 145.7,
+    "retried_with_tokens": 16000,
+    "empty_after_retry": false
+   },
+   "query_only": {
+    "answer": "North had the highest net revenue in 2025.",
+    "sql": "SELECT u.unit\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE f.month LIKE '2025-%'\n  AND a.line IN ('gross_revenue','deductions')\nGROUP BY f.unit_id, u.unit\nORDER BY SUM(f.value) DESC\nLIMIT 1;",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 15.6,
+    "correct": true
+   }
+  },
+  {
+   "id": "q07",
+   "kind": "name",
+   "expected": "Services",
+   "table_in_prompt": {
+    "answer": "The Services unit had the lowest 2025 gross revenue at 2,018.26 thousand.",
+    "correct": true,
+    "seconds": 85.4
+   },
+   "query_only": {
+    "answer": "Services had the lowest gross revenue in 2025.",
+    "sql": "SELECT u.unit\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE a.line = 'gross_revenue'\n  AND substr(f.month, 1, 4) = '2025'\nGROUP BY u.unit\nORDER BY SUM(f.value) ASC\nLIMIT 1;",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 26.0,
+    "correct": true
+   }
+  },
+  {
+   "id": "q08",
+   "kind": "number",
+   "expected": 1790.8900000000012,
+   "table_in_prompt": {
+    "answer": "The South unit's 2025 operating result was 1,790.89 thousand.",
+    "correct": true,
+    "seconds": 109.9,
+    "seconds_retry": 300.8,
+    "retried_with_tokens": 16000,
+    "empty_after_retry": false
+   },
+   "query_only": {
+    "answer": "The operating result of the South unit in 2025 was 1,790.89 thousand.",
+    "sql": "SELECT SUM(f.value)\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE u.unit = 'South'\n  AND f.month LIKE '2025-%'\n  AND a.line IN ('gross_revenue', 'deductions', 'cogs', 'opex')",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 30.6,
+    "correct": true
+   }
+  },
+  {
+   "id": "q09",
+   "kind": "percent",
+   "expected": 41.40270940970668,
+   "table_in_prompt": {
+    "answer": "",
+    "correct": false,
+    "seconds": 133.3,
+    "seconds_retry": 469.5,
+    "retried_with_tokens": 16000,
+    "empty_after_retry": true
+   },
+   "query_only": {
+    "answer": "The company's 2025 gross margin was 41.40% of net revenue.",
+    "sql": "SELECT\n  SUM(CASE WHEN a.line IN ('gross_revenue','deductions','cogs') THEN f.value ELSE 0 END)\n  / NULLIF(SUM(CASE WHEN a.line IN ('gross_revenue','deductions') THEN f.value ELSE 0 END), 0)\n  * 100 AS gross_margin_pct\nFROM fact_dre AS f\nJOIN dim_account AS a ON f.account_id = a.account_id\nWHERE f.month LIKE '2025-%';",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 33.7,
+    "correct": true
+   }
+  },
+  {
+   "id": "q10",
+   "kind": "name",
+   "expected": "Raw materials",
+   "table_in_prompt": {
+    "answer": "Raw materials was the largest cost account in 2025.",
+    "correct": true,
+    "seconds": 120.1,
+    "seconds_retry": 352.5,
+    "retried_with_tokens": 16000,
+    "empty_after_retry": false
+   },
+   "query_only": {
+    "answer": "Raw materials was the largest cost account in 2025 for the whole company.",
+    "sql": "SELECT d.account\nFROM fact_dre f\nJOIN dim_account d ON f.account_id = d.account_id\nWHERE f.month LIKE '2025-%'\n  AND d.line IN ('cogs', 'opex', 'financial')\nGROUP BY d.account_id, d.account\nORDER BY SUM(f.value) ASC\nLIMIT 1;",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 52.2,
+    "correct": true
+   }
+  },
+  {
+   "id": "q11",
+   "kind": "percent",
+   "expected": 84.96014438261395,
+   "table_in_prompt": {
+    "answer": "Export freight cost increased by approximately 85.0%.",
+    "correct": true,
+    "seconds": 60.0
+   },
+   "query_only": {
+    "answer": "Export freight cost changed by -84.96%.",
+    "sql": "WITH ef AS (\n  SELECT f.month, f.value\n  FROM fact_dre f\n  JOIN dim_unit u ON f.unit_id = u.unit_id\n  JOIN dim_account a ON f.account_id = a.account_id\n  WHERE u.unit = 'Export' AND a.account = 'Freight'\n),\nr AS (\n  SELECT month, value,\n    ROW_NUMBER() OVER (ORDER BY month) AS rn,\n    ROW_NUMBER() OVER (ORDER BY month DESC) AS rrd\n  FROM ef\n)\nSELECT\n  (AVG(CASE WHEN rrd <= 4 THEN value END)\n   - AVG(CASE WHEN rn  <= 8 THEN value END))\n  / ABS(AVG(CASE WHEN rn <= 8 THEN value END)) * 100\nFROM r",
+    "retried": true,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 97.9,
+    "correct": false
+   }
+  },
+  {
+   "id": "q12",
+   "kind": "number",
+   "expected": 201.70000000000002,
+   "table_in_prompt": {
+    "answer": "The Services unit's total 2025 marketing spend was 201.70 thousand.",
+    "correct": true,
+    "seconds": 20.2
+   },
+   "query_only": {
+    "answer": "The Services unit's total marketing spend in 2025 was 201.70 thousand.",
+    "sql": "SELECT -SUM(f.value)\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE u.unit = 'Services'\n  AND a.account = 'Marketing'\n  AND f.month LIKE '2025%'",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 21.3,
+    "correct": true
+   }
+  },
+  {
+   "id": "q13",
+   "kind": "number",
+   "expected": 111.61999999999995,
+   "table_in_prompt": {
+    "answer": "The whole company's net income in December 2025 was 111.62 thousand.",
+    "correct": true,
+    "seconds": 78.4
+   },
+   "query_only": {
+    "answer": "Net income was 111.62 thousand.",
+    "sql": "SELECT SUM(value) FROM fact_dre WHERE month = '2025-12';",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 15.2,
+    "correct": true
+   }
+  },
+  {
+   "id": "q14",
+   "kind": "name",
+   "expected": "2025-07",
+   "table_in_prompt": {
+    "answer": "Company-wide gross revenue was highest in July 2025.",
+    "correct": true,
+    "seconds": 82.3
+   },
+   "query_only": {
+    "answer": "July 2025.",
+    "sql": "SELECT f.month\nFROM fact_dre f\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE a.line = 'gross_revenue' AND f.month LIKE '2025-%'\nGROUP BY f.month\nORDER BY SUM(f.value) DESC\nLIMIT 1;",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 13.2,
+    "correct": true
+   }
+  },
+  {
+   "id": "q15",
+   "kind": "percent",
+   "expected": 24.185772807290967,
+   "table_in_prompt": {
+    "answer": "Service revenue accounted for approximately **24.19 %** of 2025 gross revenue.",
+    "correct": true,
+    "seconds": 109.6,
+    "seconds_retry": 166.3,
+    "retried_with_tokens": 16000,
+    "empty_after_retry": false
+   },
+   "query_only": {
+    "answer": "Service revenue accounted for 24.19% of 2025 gross revenue.",
+    "sql": "SELECT\n  SUM(CASE WHEN a.account = 'Service revenue' THEN f.value ELSE 0 END) * 100.0 /\n  NULLIF(SUM(f.value), 0) AS service_revenue_share_pct\nFROM fact_dre AS f\nJOIN dim_account AS a ON f.account_id = a.account_id\nWHERE f.month LIKE '2025-%'\n  AND a.line = 'gross_revenue';",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 33.7,
+    "correct": true
+   }
+  },
+  {
+   "id": "q16",
+   "kind": "number",
+   "expected": 3539.5299999999993,
+   "table_in_prompt": {
+    "answer": "The North unit's total 2025 opex was 3,539.53 (thousands).",
+    "correct": true,
+    "seconds": 69.5
+   },
+   "query_only": {
+    "answer": "The North unit's total opex in 2025 was 3,539.53 thousand.",
+    "sql": "SELECT ABS(SUM(f.value))\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE u.unit = 'North'\n  AND a.line = 'opex'\n  AND f.month LIKE '2025-%';",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 14.6,
+    "correct": true
+   }
+  },
+  {
+   "id": "q17",
+   "kind": "number",
+   "expected": 2769.92,
+   "table_in_prompt": {
+    "answer": "Sales taxes for the whole company in the first half of 2025 were 2,769.92 thousand.",
+    "correct": true,
+    "seconds": 48.8
+   },
+   "query_only": {
+    "answer": "Sales taxes for the whole company in the first half of 2025 were 2,769.92 thousand.",
+    "sql": "SELECT -SUM(f.value)\nFROM fact_dre f\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE a.account = 'Sales taxes'\n  AND f.month BETWEEN '2025-01' AND '2025-06'",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 16.9,
+    "correct": true
+   }
+  },
+  {
+   "id": "q18",
+   "kind": "number",
+   "expected": 891.0833333333331,
+   "table_in_prompt": {
+    "answer": "The South unit's average monthly gross revenue in 2025 was approximately **891.08 thousand**.",
+    "correct": true,
+    "seconds": 48.4
+   },
+   "query_only": {
+    "answer": "",
+    "sql": "SELECT AVG(f.value)\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE u.unit = 'South'\n  AND a.line = 'gross_revenue'\n  AND f.month LIKE '2025-%';",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 42.7,
+    "correct": false
+   }
+  },
+  {
+   "id": "q19",
+   "kind": "name",
+   "expected": "North",
+   "table_in_prompt": {
+    "answer": "North spent the most on IT services in 2025.",
+    "correct": true,
+    "seconds": 51.8
+   },
+   "query_only": {
+    "answer": "North spent the most on IT services in 2025.",
+    "sql": "SELECT d.unit\nFROM fact_dre f\nJOIN dim_unit d ON f.unit_id = d.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE a.account = 'IT services'\n  AND f.month LIKE '2025-%'\nGROUP BY d.unit\nORDER BY SUM(f.value) ASC\nLIMIT 1;",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 17.7,
+    "correct": true
+   }
+  },
+  {
+   "id": "q20",
+   "kind": "number",
+   "expected": 738.6900000000002,
+   "table_in_prompt": {
+    "answer": "The company's 2025 interest expense was 738.69 thousand.",
+    "correct": true,
+    "seconds": 57.4
+   },
+   "query_only": {
+    "answer": "The company's interest expense in 2025 was 738.69 thousand.",
+    "sql": "SELECT -SUM(f.value)\nFROM fact_dre f\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE a.account = 'Interest'\n  AND f.month LIKE '2025-%'",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 17.7,
+    "correct": true
+   }
+  },
+  {
+   "id": "q21",
+   "kind": "percent",
+   "expected": 17.285344618026837,
+   "table_in_prompt": {
+    "answer": "The Export unit's 2025 operating margin was approximately 17.29% of its net revenue.",
+    "correct": true,
+    "seconds": 114.2,
+    "seconds_retry": 228.3,
+    "retried_with_tokens": 16000,
+    "empty_after_retry": false
+   },
+   "query_only": {
+    "answer": "The Export unit's 2025 operating margin was 17.29% of its net revenue.",
+    "sql": "SELECT\n  SUM(CASE WHEN a.line IN ('gross_revenue','deductions','cogs','opex') THEN f.value ELSE 0 END) * 100.0 /\n  NULLIF(SUM(CASE WHEN a.line IN ('gross_revenue','deductions') THEN f.value ELSE 0 END), 0) AS operating_margin_pct\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE u.unit = 'Export'\n  AND f.month LIKE '2025-%';",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 41.7,
+    "correct": true
+   }
+  },
+  {
+   "id": "q22",
+   "kind": "percent",
+   "expected": 19.176306242022868,
+   "table_in_prompt": {
+    "answer": "Company-wide net revenue grew by approximately 19.18% from January to December 2025.",
+    "correct": true,
+    "seconds": 72.1
+   },
+   "query_only": {
+    "answer": "Company-wide net revenue grew by 19.18% from January to December 2025.",
+    "sql": "SELECT\n  (SUM(CASE WHEN f.month = '2025-12' THEN f.value ELSE 0 END)\n   - SUM(CASE WHEN f.month = '2025-01' THEN f.value ELSE 0 END))\n  / SUM(CASE WHEN f.month = '2025-01' THEN f.value ELSE 0 END) * 100\nFROM fact_dre f\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE a.line IN ('gross_revenue','deductions')\n  AND f.month IN ('2025-01','2025-12');",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 20.8,
+    "correct": true
+   }
+  },
+  {
+   "id": "q23",
+   "kind": "number",
+   "expected": 1597.34,
+   "table_in_prompt": {
+    "answer": "The North unit's fourth-quarter total COGS was 1,597.34 thousand.",
+    "correct": true,
+    "seconds": 18.4
+   },
+   "query_only": {
+    "answer": "The total cost of goods sold for the North unit in the fourth quarter was 1,597.34 thousand.",
+    "sql": "SELECT SUM(ABS(f.value))\nFROM fact_dre f\nJOIN dim_unit u ON f.unit_id = u.unit_id\nJOIN dim_account a ON f.account_id = a.account_id\nWHERE u.unit = 'North'\n  AND a.line = 'cogs'\n  AND substr(f.month, 6, 2) IN ('10','11','12')",
+    "retried": true,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 105.0,
+    "correct": true
+   }
+  },
+  {
+   "id": "q24",
+   "kind": "number",
+   "expected": 374.06,
+   "table_in_prompt": {
+    "answer": "The combined direct labour and raw materials cost for the South unit in July 2025 was 374.06 thousand.",
+    "correct": true,
+    "seconds": 6.1
+   },
+   "query_only": {
+    "answer": "The combined direct labour and raw materials cost of the South unit in July 2025 was 374.06 thousand.",
+    "sql": "SELECT COALESCE(-SUM(f.value), 0)\nFROM fact_dre AS f\nJOIN dim_unit AS u ON f.unit_id = u.unit_id\nJOIN dim_account AS a ON f.account_id = a.account_id\nWHERE u.unit = 'South'\n  AND f.month = '2025-07'\n  AND a.account IN ('Direct labour', 'Raw materials');",
+    "retried": false,
+    "fallback": false,
+    "stray_numbers": [],
+    "seconds": 40.5,
+    "correct": true
+   }
+  }
+ ]
+}
